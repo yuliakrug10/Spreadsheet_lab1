@@ -1,43 +1,57 @@
 using System;
 using System.Collections.Generic;
-using System.Numerics;
+using Antlr4.Runtime;
 
-namespace Core
+namespace Spreadsheet_lab1.Core
 {
     public class Expressions
     {
-        private readonly Dictionary<string, BigInteger> _variables;
+        private readonly Dictionary<string, double> _variables;
 
-        public Expressions(Dictionary<string, BigInteger>? variables = null)
+        public Expressions(Dictionary<string, double> variables = null)
         {
-           if (variables != null) {
+            if (variables != null)
+            {
                 _variables = variables;
-            } 
-            else {
-                _variables = new Dictionary<string, BigInteger>();
+            }
+            else
+            {
+                _variables = new Dictionary<string, double>();
             }
         }
 
         public bool BooleanExpression(string expression)
         {
             if (string.IsNullOrWhiteSpace(expression))
+            {
                 return false;
+            }
 
-            
-            return true; 
+            double result = EvaluateExpression(expression);
+            return result != 0;
         }
 
-        private BigInteger EvaluateArithmetic(string expression)
+        private double EvaluateExpression(string expression)
         {
-            return BigInteger.Zero;
-        }
+            if (expression.StartsWith("="))
+            {
+                expression = expression.Substring(1);
+            }
 
-        private List<Token> Tokenize(string expression)
-        {
-            var tokens = new List<Token>();
-            
-            return tokens;
+            var inputStream = new AntlrInputStream(expression);
+            var lexer = new LabCalculatorLexer(inputStream);
+            lexer.RemoveErrorListeners();
+            lexer.AddErrorListener(new ExceptionListener());
 
+            var commonTokenStream = new CommonTokenStream(lexer);
+            var parser = new LabCalculatorParser(commonTokenStream);
+            parser.RemoveErrorListeners();
+            parser.AddErrorListener(new ExceptionListener());
+
+            var context = parser.compileUnit();
+            var visitor = new CalculatorVisitor(_variables);
+
+            return visitor.Visit(context);
         }
     }
 }
