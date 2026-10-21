@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 
-namespace Core
+namespace Spreadsheet_lab1.Core
 {
     public class CyclesTracker
     {
-        private readonly Dictionary<string, List<string>> _dependencies = new();
+        private readonly Dictionary<string, List<string>> _dependencies = new Dictionary<string, List<string>>();
+
         public void AddDependency(string cellAddress, string depends)
         {
             if (!_dependencies.ContainsKey(depends))
@@ -24,7 +25,8 @@ namespace Core
                 _dependencies[key].Remove(cellAddress);
             }
         }
-         public bool CheckCycles(string startCell)
+
+        public bool CheckCycles(string startCell)
         {
             var visited = new HashSet<string>();
             var stack = new HashSet<string>();
@@ -34,7 +36,14 @@ namespace Core
 
         public List<string> GetDependentCells(string cellAddress)
         {
-            return _dependencies.ContainsKey(cellAddress) ? _dependencies[cellAddress] : new List<string>();
+            if (_dependencies.ContainsKey(cellAddress))
+            {
+                return new List<string>(_dependencies[cellAddress]);
+            }
+            else
+            {
+                return new List<string>();
+            }
         }
 
         private bool Dfs(string currentCell, HashSet<string> visited, HashSet<string> stack)
@@ -48,17 +57,17 @@ namespace Core
                 {
                     if (!visited.Contains(neighbor) && Dfs(neighbor, visited, stack))
                     {
-                        return true; 
+                        return true;
                     }
                     else if (stack.Contains(neighbor))
                     {
-                        return true; 
+                        return true;
                     }
                 }
             }
 
             stack.Remove(currentCell);
-            return false; 
+            return false;
         }
     }
 }
