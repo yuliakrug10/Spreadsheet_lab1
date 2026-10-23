@@ -10,28 +10,56 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <ScrollView Orientation="Horizontal" Grid.Row="0">
-            <HorizontalStackLayout Padding="5" Spacing="4">
-                <Button Text="Зберегти" Clicked="SaveButton_Clicked" Margin="2"/>
-                <Button Text="Завантажити" Clicked="LoadButton_Clicked" Margin="2"/>
-                <Button Text="Зберегти на GoogleDrive" Clicked="SaveGoogle_Clicked" Margin="2"/>
-                <Button Text="Завантажити з GoogleDrive" Clicked="LoadGoogle_Clicked" Margin="2"/>
-                <Button Text="Порахувати" Clicked="CalculateButton_Clicked" Margin="2"/>
-                <Button x:Name="modeBtn" Text="Режим: ЗНАЧЕННЯ" Clicked="SwitchModeButton_Clicked" Margin="2"/>
-                <Button Text="Довідка" Clicked="HelpButton_Clicked" Margin="2"/>
-                <Button Text="Видалити ряд" Clicked="DeleteRowButton_Clicked" Margin="2"/>
-                <Button Text="Видалити стовп" Clicked="DeleteColumnButton_Clicked" Margin="2"/>
-                <Button Text="Додати ряд" Clicked="AddRowButton_Clicked" Margin="2"/>
-                <Button Text="Додати стовп" Clicked="AddColumnButton_Clicked" Margin="2"/>
-                <Button Text="Вийти" Clicked="ExitButton_Clicked" Margin="2"/>
-            </HorizontalStackLayout>
-        </ScrollView>
 
-        <Entry x:Name="textInput" Placeholder="Введіть вираз" Grid.Row="1" Margin="5" Completed="CalculateButton_Clicked"/>
+        <VerticalStackLayout Grid.Row="0" Spacing="10" Padding="10">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <ScrollView Orientation="Horizontal" Grid.Column="0">
+                    <HorizontalStackLayout Spacing="5">
+                        <Button Text="Зберегти" Clicked="SaveButton_Clicked" BackgroundColor="#915FBA" TextColor="White" />
+                        <Button Text="Завантажити" Clicked="LoadButton_Clicked" BackgroundColor="#915FBA" TextColor="White" />
+                        <Button Text="G-Drive: Зберегти" Clicked="SaveGoogle_Clicked" BackgroundColor="#915FBA" TextColor="White" />
+                        <Button Text="G-Drive: Завантажити" Clicked="LoadGoogle_Clicked" BackgroundColor="#915FBA" TextColor="White" />
+                        <BoxView WidthRequest="1" Color="Gray" Margin="5,0" />
+                        <Button Text="Порахувати" Clicked="CalculateButton_Clicked" BackgroundColor="#915FBA" TextColor="White" />
+                        <Button x:Name="modeBtn" Text="Режим: ЗНАЧЕННЯ" Clicked="SwitchModeButton_Clicked" BackgroundColor="#915FBA" TextColor="White" />
+                    </HorizontalStackLayout>
+                </ScrollView>
+
+                <Button Grid.Column="1" Text="Довідка" Clicked="HelpButton_Clicked" BackgroundColor="#505050" Margin="10,0,0,0" TextColor="White" />
+            </Grid>
+
+
+            <HorizontalStackLayout Spacing="5">
+                <Button Text="+ Рядок" Clicked="AddRowButton_Clicked" BackgroundColor="#404040" TextColor="White" />
+                <Button Text="− Рядок" Clicked="DeleteRowButton_Clicked" BackgroundColor="#404040" TextColor="White" />
+                <BoxView WidthRequest="1" Color="Gray" Margin="5,0" />
+                <Button Text="+ Стовпець" Clicked="AddColumnButton_Clicked" BackgroundColor="#404040" TextColor="White" />
+                <Button Text="− Стовпець" Clicked="DeleteColumnButton_Clicked" BackgroundColor="#404040" TextColor="White" />
+                <BoxView WidthRequest="1" Color="Gray" Margin="5,0" />
+                <Button Text="Вийти" Clicked="ExitButton_Clicked" BackgroundColor="#500000" TextColor="White" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <Grid Grid.Row="1" Margin="10,0,10,10" ColumnSpacing="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label x:Name="addressLabel" Text="" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" Margin="0,0,10,0" />
+
+            <Entry x:Name="textInput" Grid.Column="1" Placeholder="Виберіть клітинку та введіть вираз..." Completed="CalculateButton_Clicked"/>
+        </Grid>
 
         <ScrollView Grid.Row="2" Orientation="Both">
-            <Grid x:Name="grid" Margin="5">
-            </Grid>
-        </ScrollView>
+        <Grid x:Name="grid" Margin="5">
+        </Grid>
+    </ScrollView>
     </Grid>
 </ContentPage>

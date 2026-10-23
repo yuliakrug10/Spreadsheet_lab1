@@ -44,7 +44,13 @@ namespace Spreadsheet_lab1
             for (int row = 0; row < _viewModel.RowNumber; row++)
             {
                 grid.RowDefinitions.Add(new RowDefinition { Height = 40 });
-                var label = new Label { Text = (row + 1).ToString(), VerticalOptions = LayoutOptions.Center };
+                var label = new Label
+                {
+                    Text = (row + 1).ToString(),
+                    VerticalOptions = LayoutOptions.Center,
+                    HorizontalOptions = LayoutOptions.Center,
+                    HorizontalTextAlignment = TextAlignment.Center
+                };
                 Grid.SetRow(label, row + 1);
                 Grid.SetColumn(label, 0);
                 grid.Children.Add(label);
@@ -58,6 +64,7 @@ namespace Spreadsheet_lab1
                     entry.Focused += (sender, eventArgs) =>
                     {
                         _selectedAddress = address;
+                        addressLabel.Text = address;
                         string expr = _viewModel.GetCell(address).Expression;
                         entry.Text = expr;
                         textInput.Text = expr;
@@ -66,8 +73,12 @@ namespace Spreadsheet_lab1
                     entry.Unfocused += (sender, eventArgs) =>
                     {
                         var curCell = _viewModel.GetCell(address);
-                        curCell.Expression = entry.Text;
-                        _viewModel.CalculateCell(curCell);
+                        if (entry.Text == null) { curCell.Expression = ""; }
+                        else { curCell.Expression = entry.Text; }
+
+                        if (string.IsNullOrWhiteSpace(curCell.Expression)) { curCell.HasError = false; }
+                        else { _viewModel.CalculateCell(curCell); }
+
                         UpdateAllEntries();
 
                         if (curCell.HasError)
@@ -85,20 +96,10 @@ namespace Spreadsheet_lab1
         }
         private string GetCellDisplayText(Core.Cell cell)
         {
-            if (_viewModel.IsExpressionMode)
-            {
-                return cell.Expression;
-            }
+            if (string.IsNullOrWhiteSpace(cell.Expression)) { return ""; }
+            if (_viewModel.IsExpressionMode) { return cell.Expression; }
 
-            if (string.IsNullOrWhiteSpace(cell.Expression))
-            {
-                return "";
-            }
-
-            if (cell.HasError)
-            {
-                return "Помилка";
-            }
+            if (cell.HasError) { return "Помилка"; }
 
             return cell.CalculatedValue.ToString();
         }
@@ -128,14 +129,15 @@ namespace Spreadsheet_lab1
         private void CalculateButton_Clicked(object sender, EventArgs e)
         {
             var cell = _viewModel.GetCell(_selectedAddress);
-            cell.Expression = textInput.Text;
-            _viewModel.CalculateCell(cell);
+            if (textInput.Text == null) { cell.Expression = ""; }
+            else { cell.Expression = textInput.Text; }
+
+            if (string.IsNullOrWhiteSpace(cell.Expression)) { cell.HasError = false; }
+            else { _viewModel.CalculateCell(cell); }
+
             UpdateAllEntries();
 
-            if (cell.HasError)
-            {
-                DisplayAlert("Помилка", cell.ErrorMessage, "OK");
-            }
+            if (cell.HasError) {  DisplayAlert("Помилка", cell.ErrorMessage, "OK"); }
         }
 
         private void SwitchModeButton_Clicked(object sender, EventArgs e)
