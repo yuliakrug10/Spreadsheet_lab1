@@ -10,41 +10,40 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <Grid Grid.Row="0" ColumnSpacing="10" RowSpacing="10" Padding="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <VerticalStackLayout Grid.Row="0" Spacing="10" Padding="10">
+            <ScrollView Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+                <HorizontalStackLayout Spacing="5">
+                    <Button Text="Зберегти" Clicked="SaveButton_Clicked" BackgroundColor="#915FBA" TextColor="White" />
+                    <Button Text="Завантажити" Clicked="LoadButton_Clicked" BackgroundColor="#915FBA" TextColor="White" />
+                    <Button Text="G-Drive: Зберегти" Clicked="SaveGoogle_Clicked" BackgroundColor="#915FBA" TextColor="White" />
+                    <Button Text="G-Drive: Завантажити" Clicked="LoadGoogle_Clicked" BackgroundColor="#915FBA" TextColor="White" />
+                    <BoxView WidthRequest="1" Color="Gray" Margin="5,0" />
+                    <Button Text="Порахувати" Clicked="CalculateButton_Clicked" BackgroundColor="#915FBA" TextColor="White" />
+                    <Button x:Name="modeBtn" Text="Режим: ЗНАЧЕННЯ" Clicked="SwitchModeButton_Clicked" BackgroundColor="#915FBA" TextColor="White" />
+                </HorizontalStackLayout>
+            </ScrollView>
 
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+            <Button Grid.Row="0" Grid.Column="1" Text="Вийти" Clicked="ExitButton_Clicked" BackgroundColor="#C62828" TextColor="White" WidthRequest="100" HorizontalOptions="Fill" />
 
-                <ScrollView Orientation="Horizontal" Grid.Column="0">
-                    <HorizontalStackLayout Spacing="5">
-                        <Button Text="Зберегти" Clicked="SaveButton_Clicked" BackgroundColor="#915FBA" TextColor="White" />
-                        <Button Text="Завантажити" Clicked="LoadButton_Clicked" BackgroundColor="#915FBA" TextColor="White" />
-                        <Button Text="G-Drive: Зберегти" Clicked="SaveGoogle_Clicked" BackgroundColor="#915FBA" TextColor="White" />
-                        <Button Text="G-Drive: Завантажити" Clicked="LoadGoogle_Clicked" BackgroundColor="#915FBA" TextColor="White" />
-                        <BoxView WidthRequest="1" Color="Gray" Margin="5,0" />
-                        <Button Text="Порахувати" Clicked="CalculateButton_Clicked" BackgroundColor="#915FBA" TextColor="White" />
-                        <Button x:Name="modeBtn" Text="Режим: ЗНАЧЕННЯ" Clicked="SwitchModeButton_Clicked" BackgroundColor="#915FBA" TextColor="White" />
-                    </HorizontalStackLayout>
-                </ScrollView>
-
-                <Button Grid.Column="1" Text="Довідка" Clicked="HelpButton_Clicked" BackgroundColor="#505050" Margin="10,0,0,0" TextColor="White" />
-            </Grid>
-
-
-            <HorizontalStackLayout Spacing="5">
+            <HorizontalStackLayout Grid.Row="1" Grid.Column="0" Spacing="5">
                 <Button Text="+ Рядок" Clicked="AddRowButton_Clicked" BackgroundColor="#404040" TextColor="White" />
                 <Button Text="− Рядок" Clicked="DeleteRowButton_Clicked" BackgroundColor="#404040" TextColor="White" />
                 <BoxView WidthRequest="1" Color="Gray" Margin="5,0" />
                 <Button Text="+ Стовпець" Clicked="AddColumnButton_Clicked" BackgroundColor="#404040" TextColor="White" />
                 <Button Text="− Стовпець" Clicked="DeleteColumnButton_Clicked" BackgroundColor="#404040" TextColor="White" />
-                <BoxView WidthRequest="1" Color="Gray" Margin="5,0" />
-                <Button Text="Вийти" Clicked="ExitButton_Clicked" BackgroundColor="#500000" TextColor="White" />
             </HorizontalStackLayout>
-        </VerticalStackLayout>
+
+            <Button Grid.Row="1" Grid.Column="1" Text="Довідка" Clicked="HelpButton_Clicked" BackgroundColor="#505050" TextColor="White" WidthRequest="100" HorizontalOptions="Fill" />
+        </Grid>
 
         <Grid Grid.Row="1" Margin="10,0,10,10" ColumnSpacing="10">
             <Grid.ColumnDefinitions>
@@ -58,8 +57,8 @@
         </Grid>
 
         <ScrollView Grid.Row="2" Orientation="Both">
-        <Grid x:Name="grid" Margin="5">
-        </Grid>
-    </ScrollView>
+            <Grid x:Name="grid" Margin="5">
+            </Grid>
+        </ScrollView>
     </Grid>
 </ContentPage>
