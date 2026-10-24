@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Numerics;
 
 namespace Spreadsheet_lab1.Core
 {
@@ -6,7 +7,7 @@ namespace Spreadsheet_lab1.Core
     {
         private string _address = "";
         private string _expression = "";
-        private bool _calculatedValue = false;
+        private object _calculatedValue;
         private bool _hasError = false;
         private string _errorMessage = "";
 
@@ -37,7 +38,7 @@ namespace Spreadsheet_lab1.Core
             }
         }
 
-        public bool CalculatedValue
+        public object CalculatedValue
         {
             get => _calculatedValue;
             set

@@ -182,7 +182,7 @@ namespace Spreadsheet_lab1.Core
                     }
                 }
                 var expr = new Expressions(GetCurrentVariables());
-                cell.CalculatedValue = expr.BooleanExpression(cell.Expression);
+                cell.CalculatedValue = expr.EvaluateExpression(cell.Expression);
             }
             catch (ArgumentException ex)
             {
@@ -209,18 +209,14 @@ namespace Spreadsheet_lab1.Core
             return _cells[address];
         }
 
-        private Dictionary<string, double> GetCurrentVariables()
+        private Dictionary<string, object> GetCurrentVariables()
         {
-            var vars = new Dictionary<string, double>();
+            var vars = new Dictionary<string, object>();
             foreach (string address in _cells.Keys)
             {
-                if (_cells[address].CalculatedValue)
+                if (_cells[address].CalculatedValue != null)
                 {
-                    vars[address] = 1.0;
-                }
-                else
-                {
-                    vars[address] = 0.0;
+                    vars[address] = _cells[address].CalculatedValue;
                 }
             }
             return vars;

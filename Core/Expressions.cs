@@ -1,14 +1,15 @@
+using Antlr4.Runtime;
 using System;
 using System.Collections.Generic;
-using Antlr4.Runtime;
+using System.Linq.Expressions;
 
 namespace Spreadsheet_lab1.Core
 {
     public class Expressions
     {
-        private readonly Dictionary<string, double> _variables;
+        private readonly Dictionary<string, object> _variables;
 
-        public Expressions(Dictionary<string, double> variables = null)
+        public Expressions(Dictionary<string, object> variables = null)
         {
             if (variables != null)
             {
@@ -16,23 +17,17 @@ namespace Spreadsheet_lab1.Core
             }
             else
             {
-                _variables = new Dictionary<string, double>();
+                _variables = new Dictionary<string, object>();
             }
         }
 
-        public bool BooleanExpression(string expression)
+        public object EvaluateExpression(string expression)
         {
             if (string.IsNullOrWhiteSpace(expression))
             {
-                return false;
+                return "";
             }
 
-            double result = EvaluateExpression(expression);
-            return result != 0;
-        }
-
-        private double EvaluateExpression(string expression)
-        {
             if (expression.StartsWith("="))
             {
                 expression = expression.Substring(1);

@@ -1,28 +1,29 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace Spreadsheet_lab1.Core
 {
-    public class CalculatorVisitor : LabCalculatorBaseVisitor<double>
+    public class CalculatorVisitor : LabCalculatorBaseVisitor<object>
     {
-        private readonly Dictionary<string, double> _variables;
+        private readonly Dictionary<string, object> _variables;
 
-        public CalculatorVisitor(Dictionary<string, double> variables)
+        public CalculatorVisitor(Dictionary<string, object> variables)
         {
             _variables = variables;
         }
 
-        public override double VisitCompileUnit(LabCalculatorParser.CompileUnitContext context)
+        public override object VisitCompileUnit(LabCalculatorParser.CompileUnitContext context)
         {
             return Visit(context.expression());
         }
 
-        public override double VisitNumberExpr(LabCalculatorParser.NumberExprContext context)
+        public override object VisitNumberExpr(LabCalculatorParser.NumberExprContext context)
         {
-            return double.Parse(context.GetText());
+            return BigInteger.Parse(context.GetText());
         }
 
-        public override double VisitIdentifierExpr(LabCalculatorParser.IdentifierExprContext context)
+        public override object VisitIdentifierExpr(LabCalculatorParser.IdentifierExprContext context)
         {
             string name = context.GetText().ToUpper();
             if (_variables.ContainsKey(name))
@@ -32,30 +33,30 @@ namespace Spreadsheet_lab1.Core
             throw new Exception("Посилання на неіснуючу клітинку: " + name);
         }
 
-        public override double VisitParenthesizedExpr(LabCalculatorParser.ParenthesizedExprContext context)
+        public override object VisitParenthesizedExpr(LabCalculatorParser.ParenthesizedExprContext context)
         {
             return Visit(context.expression());
         }
 
-        public override double VisitNotExpr(LabCalculatorParser.NotExprContext context)
+        public override object VisitNotExpr(LabCalculatorParser.NotExprContext context)
         {
-            var val = Visit(context.expression());
-            if (val == 0)
+            bool val = (bool)Visit(context.expression());
+            if (val == true)
             {
-                return 1;
+                return false;
             }
             else
             {
-                return 0;
+                return true;
             }
         }
 
-        public override double VisitMmaxExpr(LabCalculatorParser.MmaxExprContext context)
+        public override object VisitMmaxExpr(LabCalculatorParser.MmaxExprContext context)
         {
-            double max = double.NegativeInfinity;
-            foreach (var child in context.paramlist().expression())
+            BigInteger max = (BigInteger)Visit(context.paramlist().expression(0));
+            for (int i = 1; i < context.paramlist().expression().Length; i++)
             {
-                double val = Visit(child);
+                BigInteger val = (BigInteger)Visit(context.paramlist().expression(i));
                 if (val > max)
                 {
                     max = val;
@@ -64,12 +65,13 @@ namespace Spreadsheet_lab1.Core
             return max;
         }
 
-        public override double VisitMminExpr(LabCalculatorParser.MminExprContext context)
+        public override object VisitMminExpr(LabCalculatorParser.MminExprContext context)
         {
-            double min = double.PositiveInfinity;
-            foreach (var child in context.paramlist().expression())
+            BigInteger min = (BigInteger)Visit(context.paramlist().expression(0));
+
+            for (int i = 1; i < context.paramlist().expression().Length; i++)
             {
-                double val = Visit(child);
+                BigInteger val = (BigInteger)Visit(context.paramlist().expression(i));
                 if (val < min)
                 {
                     min = val;
@@ -78,10 +80,10 @@ namespace Spreadsheet_lab1.Core
             return min;
         }
 
-        public override double VisitMultiplicativeExpr(LabCalculatorParser.MultiplicativeExprContext context)
+        public override object VisitMultiplicativeExpr(LabCalculatorParser.MultiplicativeExprContext context)
         {
-            var left = Visit(context.expression(0));
-            var right = Visit(context.expression(1));
+            BigInteger left = (BigInteger)Visit(context.expression(0));
+            BigInteger right = (BigInteger)Visit(context.expression(1));
 
             if (context.operatorToken.Type == LabCalculatorLexer.MULTIPLY)
             {
@@ -106,7 +108,7 @@ namespace Spreadsheet_lab1.Core
                 }
                 else
                 {
-                    return Math.Floor(left / right);
+                    return left / right;
                 }
             }
             if (context.operatorToken.Type == LabCalculatorLexer.MOD)
@@ -121,13 +123,13 @@ namespace Spreadsheet_lab1.Core
                 }
             }
 
-            return 0;
+            return new BigInteger(0);
         }
 
-        public override double VisitAdditiveExpr(LabCalculatorParser.AdditiveExprContext context)
+        public override object VisitAdditiveExpr(LabCalculatorParser.AdditiveExprContext context)
         {
-            var left = Visit(context.expression(0));
-            var right = Visit(context.expression(1));
+            BigInteger left = (BigInteger)Visit(context.expression(0));
+            BigInteger right = (BigInteger)Visit(context.expression(1));
 
             if (context.operatorToken.Type == LabCalculatorLexer.ADD)
             {
@@ -138,49 +140,30 @@ namespace Spreadsheet_lab1.Core
                 return left - right;
             }
 
-            return 0;
+            return new BigInteger(0);
         }
 
-        public override double VisitComparisonExpr(LabCalculatorParser.ComparisonExprContext context)
+        public override object VisitComparisonExpr(LabCalculatorParser.ComparisonExprContext context)
         {
-            var left = Visit(context.expression(0));
-            var right = Visit(context.expression(1));
+            BigInteger left = (BigInteger)Visit(context.expression(0));
+            BigInteger right = (BigInteger)Visit(context.expression(1));
 
             if (context.operatorToken.Type == LabCalculatorLexer.LTEQ)
             {
-                if (left <= right)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return 0;
-                }
+                return left <= right;
             }
-            if (context.operatorToken.Type == LabCalculatorLexer.GTEQ)
+            else if (context.operatorToken.Type == LabCalculatorLexer.GTEQ)
             {
-                if (left >= right)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return 0;
-                }
+                return left >= right;
             }
-            if (context.operatorToken.Type == LabCalculatorLexer.NEQ)
+            else if (context.operatorToken.Type == LabCalculatorLexer.NEQ)
             {
-                if (left != right)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return 0;
-                }
+                return left != right;
             }
-
-            return 0;
+            else
+            {
+                return false;
+            }
         }
     }
 }
