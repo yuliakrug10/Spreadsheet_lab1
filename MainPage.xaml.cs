@@ -70,6 +70,25 @@ namespace Spreadsheet_lab1
                         textInput.Text = expr;
                     };
 
+                    entry.Completed += (sender, eventArgs) =>
+                    {
+                        var match = System.Text.RegularExpressions.Regex.Match(address, @"^([A-Za-z]+)([0-9]+)$");
+                        if (match.Success)
+                        {
+                            string colPart = match.Groups[1].Value;
+                            int rowPart = int.Parse(match.Groups[2].Value);
+                            int nextRow = rowPart + 1;
+                            if (nextRow <= _viewModel.RowNumber)
+                            {
+                                string nextAddress = colPart + nextRow;
+                                if (_entries.ContainsKey(nextAddress))
+                                {
+                                    _entries[nextAddress].Focus();
+                                }
+                            }
+                        }
+                    };
+
                     entry.Unfocused += (sender, eventArgs) =>
                     {
                         var curCell = _viewModel.GetCell(address);
@@ -94,6 +113,7 @@ namespace Spreadsheet_lab1
                 }
             }
         }
+
         private string GetCellDisplayText(Core.Cell cell)
         {
             if (string.IsNullOrWhiteSpace(cell.Expression)) { return ""; }
@@ -101,7 +121,11 @@ namespace Spreadsheet_lab1
 
             if (cell.HasError) { return "Помилка"; }
 
-            return cell.CalculatedValue.ToString();
+            if (cell.CalculatedValue != null)
+            {
+                return cell.CalculatedValue.ToString();
+            }
+            return "";
         }
 
         private void UpdateAllEntries()
@@ -137,7 +161,33 @@ namespace Spreadsheet_lab1
 
             UpdateAllEntries();
 
-            if (cell.HasError) {  DisplayAlert("Помилка", cell.ErrorMessage, "OK"); }
+            if (cell.HasError)
+            {
+                DisplayAlert("Помилка", cell.ErrorMessage, "OK");
+            }
+            else
+            {
+                var match = System.Text.RegularExpressions.Regex.Match(_selectedAddress, @"^([A-Za-z]+)([0-9]+)$");
+                if (match.Success)
+                {
+                    string colPart = match.Groups[1].Value;
+                    int rowPart = int.Parse(match.Groups[2].Value);
+                    int nextRow = rowPart + 1;
+                    if (nextRow <= _viewModel.RowNumber)
+                    {
+                        string nextAddress = colPart + nextRow;
+                        _selectedAddress = nextAddress;
+                        addressLabel.Text = nextAddress;
+                        var nextCell = _viewModel.GetCell(nextAddress);
+                        textInput.Text = nextCell.Expression;
+                        textInput.Focus();
+                        if (textInput.Text != null)
+                        {
+                            textInput.CursorPosition = textInput.Text.Length;
+                        }
+                    }
+                }
+            }
         }
 
         private void SwitchModeButton_Clicked(object sender, EventArgs e)
